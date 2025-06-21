@@ -4,9 +4,12 @@ from PyQt6.QtWidgets import (QApplication,
     QWidget,
     QLabel,
     QLineEdit,
+    QComboBox,
     QPushButton,
     QVBoxLayout,
     QFormLayout)
+
+DICE_SIDES = [2,3,4,6,8,10,12,20,100]
 
 class Dice:
     n=1
@@ -40,10 +43,15 @@ class MainWindow(QWidget):
         form_layout=QFormLayout()
         input_pane.setLayout(form_layout)
 
-        line_num_dice=QLineEdit()
-        line_num_dice.editingFinished.connect(lambda: self.dice.setN(line_num_dice.text()))
-        line_sides_dice=QLineEdit()
-        line_sides_dice.editingFinished.connect(lambda: self.dice.setD(line_sides_dice.text()))
+        line_num_dice=QComboBox()
+        self._setup_inputs(line_num_dice)
+        line_num_dice.addItems(str(num) for num in range(1,21))
+        line_num_dice.currentTextChanged.connect(lambda: [self.dice.setN(line_num_dice.currentText()), line_sides_dice.setFocus()])
+        
+        line_sides_dice=QComboBox()
+        self._setup_inputs(line_sides_dice)
+        line_sides_dice.addItems(str(s) for s in DICE_SIDES)
+        line_sides_dice.currentTextChanged.connect(lambda: self.dice.setD(line_sides_dice.currentText()))
 
         form_layout.addRow('No.of dice: ', line_num_dice)
         form_layout.addRow('No. of sides on each dice: ', line_sides_dice)
@@ -74,6 +82,10 @@ class MainWindow(QWidget):
         self.dice.roll_dice()        
         result_label.setText(f'Results: {self.dice.results}')
         sum_result_label.setText(f'Total: {sum(self.dice.results)}')
+
+    def _setup_inputs(self,combobox):
+        #combobox.setEditable(True)
+        combobox.InsertPolicy=QComboBox.InsertPolicy.NoInsert
 
     
 

@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import (QApplication,
     QLabel,
     QLineEdit,
     QPushButton,
-    QHBoxLayout,
+    QVBoxLayout,
     QFormLayout)
 
 class Dice:
@@ -16,10 +16,10 @@ class Dice:
         pass
 
     def setN(self, num):
-        self.n=num
+        self.n=int(num)
 
     def setD(self, sides):
-        self.d=sides
+        self.d=int(sides)
 
     def roll_dice(self):
         self.results = [randint(1, self.d) for _ in range(self.n)]
@@ -32,7 +32,7 @@ class MainWindow(QWidget):
 
         self.setWindowTitle('Teeterpogger-Simple Dice Roller for TTRPGs')
 
-        layout=QHBoxLayout()
+        layout=QVBoxLayout()
         self.setLayout(layout)
 
         #input pane
@@ -41,15 +41,15 @@ class MainWindow(QWidget):
         input_pane.setLayout(form_layout)
 
         line_num_dice=QLineEdit()
-        line_num_dice.returnPressed.connect(self.dice.setN(line_num_dice.text))
+        line_num_dice.editingFinished.connect(lambda: self.dice.setN(line_num_dice.text()))
         line_sides_dice=QLineEdit()
-        line_sides_dice.returnPressed.connect(self.dice.setD(line_sides_dice.text))
+        line_sides_dice.editingFinished.connect(lambda: self.dice.setD(line_sides_dice.text()))
 
         form_layout.addRow('No.of dice: ', line_num_dice)
         form_layout.addRow('No. of sides on each dice: ', line_sides_dice)
 
-        button=QPushButton()
-        button.clicked.connect(self.dice.roll_dice)
+        button=QPushButton("Roll Dice", self)
+        button.clicked.connect(lambda: self.getDiceResults(result_label, sum_result_label))
 
         form_layout.addWidget(button)
 
@@ -57,16 +57,23 @@ class MainWindow(QWidget):
 
         #output pane
         output_pane=QWidget(self)
-        result_layout=QHBoxLayout()
+        result_layout=QVBoxLayout()
         output_pane.setLayout(result_layout)
 
-        result_label=QLabel(f'Results: {self.dice.results}')
-        sum_result_label=QLabel(f'Total: {sum(self.dice.results)}')
+        result_label=QLabel('Results:')
+        sum_result_label=QLabel('Total:')
 
         result_layout.addWidget(result_label)
         result_layout.addWidget(sum_result_label)
 
+        layout.addWidget(output_pane)
+
         self.show()
+    
+    def getDiceResults(self, result_label, sum_result_label):
+        self.dice.roll_dice()        
+        result_label.setText(f'Results: {self.dice.results}')
+        sum_result_label.setText(f'Total: {sum(self.dice.results)}')
 
     
 

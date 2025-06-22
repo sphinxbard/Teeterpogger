@@ -12,9 +12,11 @@ from PyQt6.QtWidgets import (QApplication,
     QVBoxLayout,
     QHBoxLayout,
     QFormLayout,
-    QGridLayout)
+    QGridLayout,
+    QScrollArea)
 
 from PyQt6.QtGui import (QIntValidator, QValidator)
+from PyQt6.QtCore import Qt
 
 DICE_SIDES = [3,4,5,6,7,8,10,12,14,16,20,24,30,100]
 FATE_DICE = [1,1,0,0,-1,-1]
@@ -77,10 +79,32 @@ class MainWindow(QWidget):
         main_grid_layout=QGridLayout()
         self.setLayout(main_grid_layout)
 
+        #I/O Pane
         io_pane=QWidget(self)
         io_layout=QVBoxLayout()
         io_pane.setLayout(io_layout)
-        main_grid_layout.addWidget(io_pane)
+        main_grid_layout.addWidget(io_pane,0,0,alignment=Qt.AlignmentFlag.AlignTop)
+
+        #history pane
+        history_pane=QWidget(self)
+        history_layout=QVBoxLayout()
+        history_pane.setLayout(history_layout)
+
+        history_title=QLabel("HISTORY")
+        history_layout.addWidget(history_title, alignment=Qt.AlignmentFlag.AlignTop)
+        history_text=QLabel()   
+        history_layout.addWidget(history_text, alignment=Qt.AlignmentFlag.AlignTop)
+        clear_button=QPushButton("Clear History")
+        clear_button.clicked.connect(lambda: [history_text.setText(""), self.history.clear()])
+        history_layout.addWidget(clear_button, alignment=Qt.AlignmentFlag.AlignTop)
+
+        history_scroll_area=QScrollArea()
+        history_scroll_area.setWidgetResizable(True)
+        history_scroll_area.setWidget(history_pane)
+        history_scroll_area.setAlignment(Qt.AlignmentFlag.AlignTop)
+        # history_pane.show()
+        # history_scroll_area.show()
+        main_grid_layout.addWidget(history_scroll_area, 0, 1)
 
         #input pane
         input_pane=QWidget(self)
@@ -126,7 +150,7 @@ class MainWindow(QWidget):
         form_layout.addRow('Modifier Type: ', modifier_type_layout)
 
         button=QPushButton("Roll Dice", self)
-        button.clicked.connect(lambda: self.getDiceResults(result_label, sum_result_label, int(modifier_input.value())))
+        button.clicked.connect(lambda: self.getDiceResults(result_label, sum_result_label, history_text, int(modifier_input.value())))
 
         form_layout.addWidget(button)
 
@@ -155,7 +179,7 @@ class MainWindow(QWidget):
             inputbox.setEnabled(True)
 
 
-    def getDiceResults(self, result_label, sum_result_label, modifier=0):
+    def getDiceResults(self, result_label, sum_result_label, history_label, modifier=0):
         self.dice.roll_dice()
         times=1
         if self.per_die:
@@ -163,15 +187,15 @@ class MainWindow(QWidget):
         total=sum(self.dice.results)+(modifier*times)       
         result_label.setText(f'Rolls: {self.dice.results}')
         sum_result_label.setText(f'Total: {total}')
-        self.updateHistory(total, modifier)
+        self.updateHistory(total, modifier, history_label)
 
     def setPerDie(self, rb):
         if rb.isChecked():
             self.per_die=True
         else:
             self.per_die=False
-
-    def updateHistory(self, recent_total, recent_mod):
+     
+    def updateHistory(self, recent_total, recent_mod, history_label):
         #recent_tuple = (roll input, roll results, total) all strings
         n=str(self.dice.n)
         if self.dice.fateState:
@@ -180,13 +204,28 @@ class MainWindow(QWidget):
             d=str(self.dice.d)
         #construct the first string of the new tuple to be added to history, i.e. roll input
         recent_roll_input=''
+        mod_string=''
+        if recent_mod>0:
+            mod_string=f'+{str(recent_mod)}'
+        elif recent_mod<0:
+            mod_string=f'{str(recent_mod)}'
+
         if self.per_die:
-            recent_roll_input=f'{n}(d{d}+{str(recent_mod)})' # per die: 4(d6+mod) or dF
+            recent_roll_input=f'{n}(d{d}{mod_string})' # per die: 4(d6+mod) or dF
         else:
-            recent_roll_input=f'{n}d{d}+{str(recent_mod)}' # per roll: 4d6 + mod or dF
+            recent_roll_input=f'{n}d{d}{mod_string}' # per roll: 4d6 + mod or dF
 
         recent_tuple=(recent_roll_input, self.dice.results, recent_total)
         self.history.append(recent_tuple)
+        # Update the history pane display
+        history_text = ""
+        old_text=history_label.text()
+        for entry in self.history[::-1]:
+            roll_input, results, total = entry
+            history_text += f"You rolled:\n{roll_input}: {total}\t{results}\n"
+        
+        #history_text+=old_text
+        history_label.setText(history_text)
         
 
     def _setup_inputs(self,combobox):

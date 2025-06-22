@@ -1,5 +1,4 @@
 import sys
-from random import randint
 from PyQt6.QtWidgets import (QApplication,
     QWidget,
     QLabel,
@@ -18,10 +17,8 @@ from PyQt6.QtWidgets import (QApplication,
 from PyQt6.QtGui import (QIntValidator, QValidator)
 from PyQt6.QtCore import Qt
 
-DICE_SIDES = [3,4,5,6,7,8,10,12,14,16,20,24,30,100]
-FATE_DICE = [1,1,0,0,-1,-1]
-INT_MIN=-2147483648
-INT_MAX=2147483647
+from DiceRollerConsts import *
+from CustomClasses import Dice
 
 class QDiceSidesValidator(QValidator):
     def __init__(self, parent=None):
@@ -38,30 +35,7 @@ class QDiceSidesValidator(QValidator):
     def fixup(self):
         return ""
 
-class Dice:
-    n=1
-    d=6
-    fateState=False
-    results=[]
-    def __init__(self):
-        pass
 
-    def setN(self, num):
-        self.n=int(num)
-
-    def setD(self, sides):
-        self.d=int(sides)
-
-    def toggleFateState(self):
-        self.fateState = not(self.fateState)
-        if self.fateState:
-            self.d=6
-
-    def roll_dice(self):
-        if self.fateState:
-            self.results = [FATE_DICE[randint(0,5)] for _ in range(self.n)]
-        else:
-            self.results = [randint(1, self.d) for _ in range(self.n)]
 
 class MainWindow(QWidget):
 
@@ -102,8 +76,6 @@ class MainWindow(QWidget):
         history_scroll_area.setWidgetResizable(True)
         history_scroll_area.setWidget(history_pane)
         history_scroll_area.setAlignment(Qt.AlignmentFlag.AlignTop)
-        # history_pane.show()
-        # history_scroll_area.show()
         main_grid_layout.addWidget(history_scroll_area, 0, 1)
 
         #input pane

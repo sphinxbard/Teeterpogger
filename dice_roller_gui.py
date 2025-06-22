@@ -11,7 +11,8 @@ from PyQt6.QtWidgets import (QApplication,
     QPushButton,
     QVBoxLayout,
     QHBoxLayout,
-    QFormLayout)
+    QFormLayout,
+    QGridLayout)
 
 from PyQt6.QtGui import (QIntValidator, QValidator)
 
@@ -64,14 +65,22 @@ class MainWindow(QWidget):
 
     dice = Dice()
     per_die=False
+    history=[]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.display()
 
+    def display(self):
         self.setWindowTitle('Teeterpogger-Simple Dice Roller for TTRPGs')
+        
+        main_grid_layout=QGridLayout()
+        self.setLayout(main_grid_layout)
 
-        layout=QVBoxLayout()
-        self.setLayout(layout)
+        io_pane=QWidget(self)
+        io_layout=QVBoxLayout()
+        io_pane.setLayout(io_layout)
+        main_grid_layout.addWidget(io_pane)
 
         #input pane
         input_pane=QWidget(self)
@@ -121,7 +130,7 @@ class MainWindow(QWidget):
 
         form_layout.addWidget(button)
 
-        layout.addWidget(input_pane)
+        io_layout.addWidget(input_pane)
 
         #output pane
         output_pane=QWidget(self)
@@ -134,7 +143,7 @@ class MainWindow(QWidget):
         result_layout.addWidget(result_label)
         result_layout.addWidget(sum_result_label)
 
-        layout.addWidget(output_pane)
+        io_layout.addWidget(output_pane)
 
         self.show()
     
@@ -154,12 +163,31 @@ class MainWindow(QWidget):
         total=sum(self.dice.results)+(modifier*times)       
         result_label.setText(f'Rolls: {self.dice.results}')
         sum_result_label.setText(f'Total: {total}')
+        self.updateHistory(total, modifier)
 
     def setPerDie(self, rb):
         if rb.isChecked():
             self.per_die=True
         else:
             self.per_die=False
+
+    def updateHistory(self, recent_total, recent_mod):
+        #recent_tuple = (roll input, roll results, total) all strings
+        n=str(self.dice.n)
+        if self.dice.fateState:
+            d='F'
+        else:
+            d=str(self.dice.d)
+        #construct the first string of the new tuple to be added to history, i.e. roll input
+        recent_roll_input=''
+        if self.per_die:
+            recent_roll_input=f'{n}(d{d}+{str(recent_mod)})' # per die: 4(d6+mod) or dF
+        else:
+            recent_roll_input=f'{n}d{d}+{str(recent_mod)}' # per roll: 4d6 + mod or dF
+
+        recent_tuple=(recent_roll_input, self.dice.results, recent_total)
+        self.history.append(recent_tuple)
+        
 
     def _setup_inputs(self,combobox):
         #combobox.setEditable(True)

@@ -4,16 +4,21 @@ from PyQt6.QtWidgets import (QApplication,
     QWidget,
     QLabel,
     QComboBox,
-    QLineEdit,
+    QSpinBox,
     QCheckBox,
+    QButtonGroup,
+    QRadioButton,
     QPushButton,
     QVBoxLayout,
+    QHBoxLayout,
     QFormLayout)
 
 from PyQt6.QtGui import (QIntValidator, QValidator)
 
 DICE_SIDES = [3,4,5,6,7,8,10,12,14,16,20,24,30,100]
 FATE_DICE = [1,1,0,0,-1,-1]
+INT_MIN=-2147483648
+INT_MAX=2147483647
 
 class QDiceSidesValidator(QValidator):
     def __init__(self, parent=None):
@@ -58,6 +63,8 @@ class Dice:
 class MainWindow(QWidget):
 
     dice = Dice()
+    per_die=False
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -88,12 +95,29 @@ class MainWindow(QWidget):
         line_sides_dice.addItems(str(s) for s in DICE_SIDES)
         line_sides_dice.currentTextChanged.connect(lambda: self.dice.setD(line_sides_dice.currentText()))
 
+        modifier_input=QSpinBox()
+        modifier_input.setRange(INT_MIN, INT_MAX)
+        modifier_input.setValue(0)
+
+        modifier_type=QButtonGroup()
+        rb_per_roll=QRadioButton('Per Roll', self)
+        rb_per_die=QRadioButton('Per Die', self)
+        modifier_type.addButton(rb_per_roll,1)
+        modifier_type.addButton(rb_per_die,2)
+        rb_per_roll.setChecked(True)
+        rb_per_die.toggled.connect(lambda: self.setPerDie(rb_per_die))
+        modifier_type_layout = QHBoxLayout()
+        modifier_type_layout.addWidget(rb_per_roll)
+        modifier_type_layout.addWidget(rb_per_die)
+        
         form_layout.addWidget(fate_checkbox)
         form_layout.addRow('No.of dice: ', line_num_dice)
         form_layout.addRow('No. of sides on each dice: ', line_sides_dice)
+        form_layout.addRow('Modifier: ', modifier_input)        
+        form_layout.addRow('Modifier Type: ', modifier_type_layout)
 
         button=QPushButton("Roll Dice", self)
-        button.clicked.connect(lambda: self.getDiceResults(result_label, sum_result_label))
+        button.clicked.connect(lambda: self.getDiceResults(result_label, sum_result_label, int(modifier_input.value())))
 
         form_layout.addWidget(button)
 
@@ -104,7 +128,7 @@ class MainWindow(QWidget):
         result_layout=QVBoxLayout()
         output_pane.setLayout(result_layout)
 
-        result_label=QLabel('Results:')
+        result_label=QLabel('Rolls:')
         sum_result_label=QLabel('Total:')
 
         result_layout.addWidget(result_label)
@@ -122,10 +146,20 @@ class MainWindow(QWidget):
             inputbox.setEnabled(True)
 
 
-    def getDiceResults(self, result_label, sum_result_label):
-        self.dice.roll_dice()        
-        result_label.setText(f'Results: {self.dice.results}')
-        sum_result_label.setText(f'Total: {sum(self.dice.results)}')
+    def getDiceResults(self, result_label, sum_result_label, modifier=0):
+        self.dice.roll_dice()
+        times=1
+        if self.per_die:
+            times=len(self.dice.results)
+        total=sum(self.dice.results)+(modifier*times)       
+        result_label.setText(f'Rolls: {self.dice.results}')
+        sum_result_label.setText(f'Total: {total}')
+
+    def setPerDie(self, rb):
+        if rb.isChecked():
+            self.per_die=True
+        else:
+            self.per_die=False
 
     def _setup_inputs(self,combobox):
         #combobox.setEditable(True)

@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import (QApplication,
     QGridLayout,
     QScrollArea)
 
-from PyQt6.QtGui import (QIntValidator, QValidator)
+from PyQt6.QtGui import (QIntValidator, QValidator, QFontDatabase)
 from PyQt6.QtCore import Qt
 
 from DiceRollerConsts import *
@@ -45,6 +45,7 @@ class MainWindow(QWidget):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.setObjectName("mainWindow")
         self.display()
 
     def display(self):
@@ -79,7 +80,7 @@ class MainWindow(QWidget):
         main_grid_layout.addWidget(history_scroll_area, 0, 1)
 
         #input pane
-        input_pane=QWidget(self)
+        input_pane=QWidget(io_pane)
         form_layout=QFormLayout()
         input_pane.setLayout(form_layout)
 
@@ -87,14 +88,12 @@ class MainWindow(QWidget):
         fate_checkbox.stateChanged.connect(lambda: [self.dice.toggleFateState(), line_sides_dice.setCurrentText('6'), self.freezeUnfreezeInput(line_sides_dice)])
         
         line_num_dice=QComboBox()
-        self._setup_inputs(line_num_dice)
         num_validator=QIntValidator(1,20,self)
         line_num_dice.setValidator(num_validator)
         line_num_dice.addItems(str(num) for num in range(1,21))
         line_num_dice.currentTextChanged.connect(lambda: [self.dice.setN(line_num_dice.currentText()), line_sides_dice.setFocus()])
         
         line_sides_dice=QComboBox()
-        self._setup_inputs(line_sides_dice)
         sides_validator=QDiceSidesValidator()
         line_sides_dice.setValidator(sides_validator)
         line_sides_dice.addItems(str(s) for s in DICE_SIDES)
@@ -129,7 +128,7 @@ class MainWindow(QWidget):
         io_layout.addWidget(input_pane)
 
         #output pane
-        output_pane=QWidget(self)
+        output_pane=QWidget(io_pane)
         result_layout=QVBoxLayout()
         output_pane.setLayout(result_layout)
 
@@ -198,17 +197,18 @@ class MainWindow(QWidget):
         
         #history_text+=old_text
         history_label.setText(history_text)
-        
-
-    def _setup_inputs(self,combobox):
-        #combobox.setEditable(True)
-        combobox.InsertPolicy=QComboBox.InsertPolicy.NoInsert
 
     
 
 def main():
     app=QApplication(sys.argv)
     window=MainWindow()
+
+    QFontDatabase.addApplicationFont("Fonts/Eczar-VariableFont_wght.ttf")
+    QFontDatabase.addApplicationFont("Fonts/Grenze-Regular.ttf")
+    with open('stylesheet.qss', 'r') as f:
+        style = f.read()
+        app.setStyleSheet(style)
     sys.exit(app.exec())
 
 if __name__=='__main__':

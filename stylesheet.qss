@@ -1,0 +1,151 @@
+/* Fanta.css (Fantasy + CSS) - QSS Conversion */
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Eczar", serif;
+}
+
+QWidget {
+    /* background: white; */
+    color: #030615;
+    font-size: 14px; /* 0.875rem */
+    line-height: 25.6px; /* 1.6rem */
+}
+
+/* Content Sectioning */
+QWidget#mainWindow {    
+    border-image: url(:images/parchment_bg.jpg);
+}
+
+/* Typography */
+QLabel, QPushButton {
+    font-family: "Grenze", serif;
+}
+
+QLabel#h1 {
+    font-size: 30px;
+    line-height: 36px;
+}
+QLabel#h2 {
+    font-size: 24px;
+    line-height: 32px;
+}
+QLabel#h3 {
+    font-size: 20px;
+    line-height: 28px;
+}
+QLabel#h4 {
+    font-size: 18px;
+    line-height: 28px;
+}
+QLabel#h5 {
+    font-size: 16px;
+    line-height: 24px;
+}
+QLabel#h6 {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+QLabel, QTextEdit {
+    width: fit-content;
+}
+
+QLabel[dt="true"] {
+    font-weight: bold;
+}
+
+QLabel[figcaption="true"] {
+    padding-top: 10px;
+    font-size: 13px;
+}
+
+/* Lists */
+QListWidget, QTreeWidget {
+    padding-left: 16px;
+}
+
+QListWidget::item, QTreeWidget::item {
+    line-height: 25.6px;
+}
+
+/* Links */
+QLabel[link="true"] {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+/* Buttons */
+QPushButton {
+    color: #030615;
+    background-color: white;
+    font-family: "Grenze", serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 20px;
+    border: 1.5px solid #bed1e7;
+    border-radius: 8px;
+}
+
+QPushButton:hover {
+    border-color: #64748b;
+}
+
+QPushButton:disabled {
+    border: 1.5px solid #bed1e7;
+    opacity: 0.55;
+}
+
+/* Inputs */
+QLineEdit, QSpinBox, QComboBox {
+    font-size: 16px;
+    background-color: #f8fafc;
+    border: 1px solid #bed1e7;
+    color: #030615;
+    padding: 8px 12px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+}
+
+QLineEdit:disabled, QTextEdit:disabled {
+    opacity: 0.6;
+}
+
+QCheckBox, QRadioButton {
+    padding: 8px;
+    border-radius: 7px;
+    margin: 8px 4px 8px 8px;
+}
+
+QRadioButton {
+    border-radius: 100%;
+}
+
+QCheckBox:checked, QRadioButton:checked {
+    background: #bed1e7;
+}
+
+
+/* Misc */
+QProgressBar {
+    height: 16px;
+    margin: 12px 0;
+    background: white;
+    border: 1px solid #f1f5f9;
+    border-radius: 8px;
+}
+
+QProgressBar::chunk {
+    background-color: #2563eb;
+    border-radius: 8px;
+}
+
+QGroupBox {
+    border: 1px solid #f1f5f9;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    padding: 16px;
+    max-width: fit-content;
+}

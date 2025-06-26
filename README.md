@@ -1,6 +1,6 @@
 # Teeterpogger v1.0- Simple Dice Roller for TTRPGs
 
-**Teeterpogger**: *Noun* : Phonetic version of TTRPGer, i.e. someone who plays TTRPGs
+**Teeterpogger**: *Noun* : Phonetic version of TTRPGer, i.e. someone who plays TTRPGs.
 This program is a simple dice-roller made with Python and a PyQT6 GUI, designed to be used for Table-Top Role-Playing Games (TTRPGs for short).
 
 ## Features

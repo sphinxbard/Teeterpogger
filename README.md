@@ -30,3 +30,6 @@ This program is a simple dice-roller made with Python and a PyQT6 GUI, designed 
 
 <h6> Comments? Bug reports? Feature requests?</h6>
 Open an issue and I will get back to you as soon as I can. Since this is a solo-developed project, replies may take time, but they'll arrive.
+
+<h6> Credits</h6>
+Stylesheet developed by referring to [Jamezmca's Fanta.css](https://github.com/jamezmca/fantacss/blob/main/fanta.css)

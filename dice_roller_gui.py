@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import (QApplication,
     QGridLayout,
     QScrollArea)
 
-from PyQt6.QtGui import (QIntValidator, QValidator, QFontDatabase)
+from PyQt6.QtGui import (QIntValidator, QValidator, QFontDatabase, QIcon, QPixmap, QPainter)
 from PyQt6.QtCore import Qt
 
 from DiceRollerConsts import *
@@ -45,35 +45,46 @@ class MainWindow(QWidget):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setObjectName("mainWindow")
+        self.setObjectName('mainWindow')
         self.display()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        pixmap = QPixmap("images/parchment_light.jpg")
+        if not pixmap.isNull():
+            painter.drawPixmap(self.rect(), pixmap)
+        super().paintEvent(event)
 
     def display(self):
         self.setWindowTitle('Teeterpogger-Simple Dice Roller for TTRPGs')
-        
+        self.setWindowIcon(QIcon("images/dice.png"))
         main_grid_layout=QGridLayout()
         self.setLayout(main_grid_layout)
 
         #I/O Pane
         io_pane=QWidget(self)
+        io_pane.setObjectName("ioPane")
         io_layout=QVBoxLayout()
         io_pane.setLayout(io_layout)
-        main_grid_layout.addWidget(io_pane,0,0,alignment=Qt.AlignmentFlag.AlignTop)
+        main_grid_layout.addWidget(io_pane,0,0)
 
         #history pane
         history_pane=QWidget(self)
+        history_pane.setObjectName("historyPane")
         history_layout=QVBoxLayout()
         history_pane.setLayout(history_layout)
 
         history_title=QLabel("HISTORY")
-        history_layout.addWidget(history_title, alignment=Qt.AlignmentFlag.AlignTop)
+        history_title.setObjectName('h3')
+        history_layout.addWidget(history_title, alignment=Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignCenter)
         history_text=QLabel()   
         history_layout.addWidget(history_text, alignment=Qt.AlignmentFlag.AlignTop)
         clear_button=QPushButton("Clear History")
         clear_button.clicked.connect(lambda: [history_text.setText(""), self.history.clear()])
-        history_layout.addWidget(clear_button, alignment=Qt.AlignmentFlag.AlignTop)
+        history_layout.addWidget(clear_button, alignment=Qt.AlignmentFlag.AlignBottom)
 
         history_scroll_area=QScrollArea()
+        history_scroll_area.setObjectName("historyScrollArea")
         history_scroll_area.setWidgetResizable(True)
         history_scroll_area.setWidget(history_pane)
         history_scroll_area.setAlignment(Qt.AlignmentFlag.AlignTop)
@@ -125,7 +136,7 @@ class MainWindow(QWidget):
 
         form_layout.addWidget(button)
 
-        io_layout.addWidget(input_pane)
+        io_layout.addWidget(input_pane, alignment=Qt.AlignmentFlag.AlignTop)
 
         #output pane
         output_pane=QWidget(io_pane)
@@ -138,7 +149,7 @@ class MainWindow(QWidget):
         result_layout.addWidget(result_label)
         result_layout.addWidget(sum_result_label)
 
-        io_layout.addWidget(output_pane)
+        io_layout.addWidget(output_pane,alignment=Qt.AlignmentFlag.AlignTop)
 
         self.show()
     
@@ -203,6 +214,8 @@ class MainWindow(QWidget):
 def main():
     app=QApplication(sys.argv)
     window=MainWindow()
+    window.setObjectName("mainWindow")
+    window.resize(600, 400)
 
     QFontDatabase.addApplicationFont("Fonts/Eczar-VariableFont_wght.ttf")
     QFontDatabase.addApplicationFont("Fonts/Grenze-Regular.ttf")

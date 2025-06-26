@@ -8,14 +8,24 @@
 
 QWidget {
     /* background: white; */
-    color: #030615;
+    color: #411d04;
     font-size: 14px; /* 0.875rem */
     line-height: 25.6px; /* 1.6rem */
 }
 
 /* Content Sectioning */
 QWidget#mainWindow {    
-    border-image: url(:images/parchment_bg.jpg);
+    /* border-image: url(images/parchment_light.jpg); */
+}
+
+QWidget#ioPane, #historyPane {
+    background: transparent;
+}
+QWidget#historyPane {
+    border: 2px solid  #523206;
+}
+QAbstractScrollArea#historyScrollArea{
+    background: transparent;
 }
 
 /* Typography */
@@ -48,69 +58,104 @@ QLabel#h6 {
     line-height: 20px;
 }
 
-QLabel, QTextEdit {
-    width: fit-content;
-}
-
-QLabel[dt="true"] {
-    font-weight: bold;
-}
-
-QLabel[figcaption="true"] {
-    padding-top: 10px;
-    font-size: 13px;
-}
-
 /* Lists */
 QListWidget, QTreeWidget {
     padding-left: 16px;
 }
 
-QListWidget::item, QTreeWidget::item {
-    line-height: 25.6px;
-}
-
-/* Links */
-QLabel[link="true"] {
-    color: #2563eb;
-    text-decoration: none;
-}
-
 /* Buttons */
 QPushButton {
     color: #030615;
-    background-color: white;
+    background-color: #f0d895;
     font-family: "Grenze", serif;
     font-size: 14px;
     font-weight: 500;
     padding: 4px 20px;
-    border: 1.5px solid #bed1e7;
+    border: 1.5px solid #c0a252;
     border-radius: 8px;
 }
 
 QPushButton:hover {
-    border-color: #64748b;
+    border-color: #2f1d03;
 }
 
 QPushButton:disabled {
-    border: 1.5px solid #bed1e7;
+    border: 1.5px solid #8f7e5a;
     opacity: 0.55;
 }
 
 /* Inputs */
 QLineEdit, QSpinBox, QComboBox {
-    font-size: 16px;
-    background-color: #f8fafc;
-    border: 1px solid #bed1e7;
+    font-size: 14px;
+    background-color: #fce9c1;
+    border: 1px solid #4f3605;
     color: #030615;
-    padding: 8px 12px;
+    padding: 8px 8px;
     border-radius: 8px;
-    width: 100%;
+    height: 16px;
+    width: 16px;
+    outline: none;
+}
+
+QComboBox QAbstractItemView {
+    background: #f8e7c1;
+    border: 1px solid #c0a252;
+    selection-background-color: #f0d895;
+    selection-color: #411d04;
+    color: #411d04;
     outline: none;
 }
 
 QLineEdit:disabled, QTextEdit:disabled {
     opacity: 0.6;
+}
+
+QComboBox:disabled {
+    color: #b3a98a; /* faded text */
+    background-color: #e4d6b1; /* lighter background */
+    border: 1px solid #b3a98a;
+}
+
+/* SpinBox arrows */
+QSpinBox::up-button {
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+    width: 20px;
+    height: 16px;
+    image: url(images/arrow_up.png);
+    background: transparent;
+    border: none;
+}
+QSpinBox::down-button {
+    subcontrol-origin: border;
+    subcontrol-position: bottom right;
+    width: 20px;
+    height: 16px;
+    image: url(images/arrow_down.png); 
+    background: transparent;
+    border: none;
+}
+QSpinBox::up-arrow, QSpinBox::down-arrow {
+    width: 16px;
+    height: 16px;
+}
+
+/* ComboBox arrow */
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 24px;
+    border: none;
+    background: transparent;
+}
+QComboBox::down-arrow {
+    image: url(images/arrow_down.png); /* Your custom down arrow */
+    width: 16px;
+    height: 16px;
+}
+
+QComboBox::down-arrow:disabled {
+    image: url(images/arrow_down_disabled.png);
 }
 
 QCheckBox, QRadioButton {
@@ -120,11 +165,137 @@ QCheckBox, QRadioButton {
 }
 
 QRadioButton {
-    border-radius: 100%;
+    border-radius: 50%;
 }
 
-QCheckBox:checked, QRadioButton:checked {
-    background: #bed1e7;
+QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 2px solid #c0a252;
+    background: #fce9c1;
+    margin-right: 6px;
+}
+
+QRadioButton::indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    border: 2px solid #c0a252;
+    background: #fce9c1;
+    margin-right: 6px;
+}
+
+QCheckBox::indicator:checked {
+    background: #a18c60;
+    border: 2px solid #432e0e;
+    image: url(images/checkmark_gold.png);
+}
+
+QCheckBox::indicator:unchecked {
+    background: #fce9c1;
+    border: 2px solid #c0a252;
+    image: none;
+}
+
+QRadioButton::indicator:checked {
+    background: #dfb967;
+    border: 2px solid #432e0e;
+    image: url(images/radio_checked_gold.png); /* Use your own radio image or remove for default dot */
+}
+
+QRadioButton::indicator:unchecked {
+    background: #fce9c1;
+    border: 2px solid #c0a252;
+    image: none;
+}
+
+/* Scrollbar */
+
+QScrollBar:vertical {
+    background: #fce9c1;
+    width: 16px;
+    margin: 4px 0 4px 0;
+    border: 1px solid #c0a252;
+    border-radius: 8px;
+}
+
+QScrollBar::handle:vertical {
+    background: #dfb967;
+    min-height: 24px;
+    border-radius: 8px;
+    border: 1px solid #a18c60;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    background: #f0d895;
+    height: 16px;
+    border: 1px solid #c58f40;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical {
+    subcontrol-position: top;
+    image: url(images/arrow_up.png);
+}
+
+QScrollBar::add-line:vertical {
+    subcontrol-position: bottom;
+    image: url(images/arrow_down.png);
+}
+
+QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {
+    width: 12px;
+    height: 12px;
+}
+
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+    background: none;
+}
+
+QScrollBar:horizontal {
+    background: #fce9c1;
+    height: 16px;
+    margin: 0 4px 0 4px;
+    border: 1px solid #c0a252;
+    border-radius: 8px;
+}
+
+QScrollBar::handle:horizontal {
+    background: #dfb967;
+    min-width: 24px;
+    border-radius: 8px;
+    border: 1px solid #a18c60;
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+    background: #f0d895;
+    width: 16px;
+    border: 1px solid #c58f40;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:horizontal {
+    subcontrol-position: left;
+    image: url(images/arrow_left.png);
+}
+
+QScrollBar::add-line:horizontal {
+    subcontrol-position: right;
+    image: url(images/arrow_right.png);
+}
+
+QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {
+    width: 12px;
+    height: 12px;
+}
+
+QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
+    background: none;
 }
 
 
